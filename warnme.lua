@@ -126,10 +126,28 @@ windower.register_event('action', function(action)
     -- fail as soon as possible: only if something is targeted and the action came from that target
     if windower.ffxi.get_mob_by_target('t') and windower.ffxi.get_mob_by_target('t').id == action.actor_id then
         local target = windower.ffxi.get_mob_by_target('t')
+        local target_mob = windower.ffxi.get_mob_by_id(target.claim_id)
+
+        -- Debug prints for nil checks before potential nil dereference
+        --windower.add_to_chat(207, string.format(
+        --    "DEBUG Values:\n" ..
+        --    "target: %s\n" ..
+        --    "target.spawn_type: %s\n" ..
+        --    "target.claim_id: %s\n" .. 
+        --    "get_mob_by_id result: %s\n" ..
+        --    "settings.ability.show.others: %s",
+        --    target and "exists" or "nil",
+        --    target and target.spawn_type or "nil",
+        --    target and target.claim_id or "nil",
+        --    (target and target.claim_id and windower.ffxi.get_mob_by_id(target.claim_id)) and "exists" or "nil",
+        --    settings and settings.ability and settings.ability.show and 
+        --    tostring(settings.ability.show.others) or "nil"
+        --))
 
         if
+            (target and target_mob) and -- Dont de-ref nil mobs by id
             target.spawn_type == 16 and -- target is a monster
-            (settings.ability.show.others or windower.ffxi.get_mob_by_id(target.claim_id).in_alliance) and
+            (settings.ability.show.others or target_mob.in_alliance) and
             (action.category == 6 or action.category == 7 or (action.category == 8 and settings.ability.show.spells))
         then
             display_action(action, action.category)
