@@ -88,7 +88,8 @@ function display_action(action, category)
     local language = windower.ffxi.get_info().language == "English" and 'en' or 'ja'
     local ability_id = action.targets[1].actions[1].param
     local categories = {[6]="job_abilities", [7]="monster_abilities", [8]="spells"}
-    local action_name = res[categories[category]][ability_id][language]
+    local category_table = res[categories[category]]
+    local action_name = category_table and category_table[ability_id] and category_table[ability_id][language]
 
     ability:text(action_name)
     align_center(ability, 'ability', action_name)
